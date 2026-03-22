@@ -519,29 +519,31 @@
   }, { threshold: 0.08 });
   revealEls.forEach(el => observer.observe(el));
 
-  // Form submission
+  // Form submission (Updated for Google Sheets)
   function handleSubmit(e) {
     e.preventDefault();
-    const ig = document.getElementById('ig-link').value.trim();
-    const line = document.getElementById('line-link').value.trim();
-    if (!ig && !line) {
-      const btn = document.getElementById('submit-btn');
-      btn.textContent = 'กรุณากรอกข้อมูลอย่างน้อย 1 ช่อง';
-      btn.style.borderColor = '#c0392b';
-      btn.style.color = '#c0392b';
-      setTimeout(() => {
-        btn.textContent = document.getElementById('submit-btn-text') || 'ส่งข้อมูล';
-        btn.style.borderColor = '';
-        btn.style.color = '';
-      }, 2500);
-      return;
-    }
-    document.getElementById('apply-form').style.display = 'none';
-    document.getElementById('form-success').style.display = 'block';
-    lucide.createIcons();
-  }
+    
+    // ใส่ลิงก์ Web App URL ของคุณที่นี่
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxXYDVduN3LHgh_kR1hG4jPJgpAdedVSvLc82_DQv9sULaEV4Tc2S_8cG4WuhZl3rv--Q/exec'; 
+    
+    const btn = document.getElementById('submit-btn');
+    const form = document.getElementById('apply-form');
+    
+    btn.textContent = 'กำลังส่งข้อมูล...';
+    btn.disabled = true;
 
-  // Element SDK
+    fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+      .then(response => {
+        document.getElementById('apply-form').style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
+        lucide.createIcons();
+      })
+      .catch(error => {
+        btn.textContent = 'เกิดข้อผิดพลาด ลองใหม่';
+        btn.disabled = false;
+        console.error('Error!', error.message);
+      });
+  }
   const defaultConfig = {
     site_name: 'Mingzhou',
     hero_subtitle: 'เราคือองค์กรที่มองหาคนมีความสามารถ · มาร่วมสร้างสิ่งที่ยิ่งใหญ่ด้วยกัน',
